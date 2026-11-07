@@ -9,7 +9,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/css/app-admin.css',
                 'resources/js/app.js',
-                'resources/js/admin.js',
+                'resources/js/admin-app.js',
                 'resources/js/product-3d.js',
                 'resources/js/checkout-map.js',
                 'resources/js/ai-products.js',
