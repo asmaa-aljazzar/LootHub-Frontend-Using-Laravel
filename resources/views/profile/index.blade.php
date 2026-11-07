@@ -1,25 +1,13 @@
+@extends('layout.app')
 
-<?php
-/**
- * Profile Page
- *
- * Expects:
- * $user (array)
- * $designs (array)
- * $appUrl (string)
- * $csrfToken (string)
- */
+@section('title', 'Your profile — LootHub')
 
-$user = isset($user) && is_array($user) ? $user : [];
-$designs = isset($designs) && is_array($designs) ? $designs : [];
-
-$appUrl = rtrim($appUrl ?? '', '/');
-$csrfToken = $csrfToken ?? '';
-
-$pageTitle = 'Your profile';
-
-require __DIR__ . '/../layouts/user-header.php';
-?>
+@section('content')
+@php
+    $user = $user ?? ['name' => 'Asmaa', 'email' => 'asmaa@example.com', 'phone' => '+962 790 000 000', 'role' => 'customer'];
+    $designs = $designs ?? [['id' => 1, 'created_at' => '2026-11-07', 'image' => asset('images/products/batmanLogoHoodie.png')]];
+    $userLanguage = $userLanguage ?? 'en';
+@endphp
 
 <section class="user-page">
     <div class="user-container">
@@ -48,44 +36,32 @@ require __DIR__ . '/../layouts/user-header.php';
                     <div>
                         <dt>Name</dt>
                         <dd dir="auto">
-                            <?= htmlspecialchars(
-                                (string) ($user['name'] ?? ''),
-                                ENT_QUOTES | ENT_SUBSTITUTE,
-                                'UTF-8'
-                            ) ?>
+                            {{ 
+                                (string) ($user['name'] ?? '') }}
                         </dd>
                     </div>
 
                     <div>
                         <dt>Email</dt>
                         <dd>
-                            <?= htmlspecialchars(
-                                (string) ($user['email'] ?? ''),
-                                ENT_QUOTES | ENT_SUBSTITUTE,
-                                'UTF-8'
-                            ) ?>
+                            {{ 
+                                (string) ($user['email'] ?? '') }}
                         </dd>
                     </div>
 
                     <div>
                         <dt>Phone</dt>
                         <dd>
-                            <?= htmlspecialchars(
-                                (string) ($user['phone'] ?? ''),
-                                ENT_QUOTES | ENT_SUBSTITUTE,
-                                'UTF-8'
-                            ) ?: 'Not provided' ?>
+                            {{ 
+                                (string) ($user['phone'] ?? '') ?: 'Not provided' }}
                         </dd>
                     </div>
 
                     <div>
                         <dt>Account Type</dt>
                         <dd>
-                            <?= htmlspecialchars(
-                                (string) ($user['role'] ?? ''),
-                                ENT_QUOTES | ENT_SUBSTITUTE,
-                                'UTF-8'
-                            ) ?>
+                            {{ 
+                                (string) ($user['role'] ?? '') }}
                         </dd>
                     </div>
 
@@ -96,7 +72,7 @@ require __DIR__ . '/../layouts/user-header.php';
                 <!-- UPDATE PROFILE -->
                 <form
                     class="user-form"
-                    action="<?= htmlspecialchars($appUrl . '/profile', ENT_QUOTES, 'UTF-8') ?>"
+                    action="{{ url('/profile') }}"
                     method="post"
                     data-user-async-form
                     data-user-method="PUT"
@@ -105,10 +81,8 @@ require __DIR__ . '/../layouts/user-header.php';
 
                     <h3>Update Profile</h3>
 
-                    <input
-                        type="hidden"
-                        name="csrf_token"
-                        value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
+                    @csrf
+                    @method('PUT')
 
                     <div class="user-field">
                         <label for="profile-name">Name</label>
@@ -119,7 +93,7 @@ require __DIR__ . '/../layouts/user-header.php';
                             type="text"
                             name="name"
                             maxlength="100"
-                            value="<?= htmlspecialchars((string) ($user['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
+                            value="{{ (string) ($user['name'] ?? '') }}"
                             required>
                     </div>
 
@@ -132,7 +106,7 @@ require __DIR__ . '/../layouts/user-header.php';
                             type="tel"
                             name="phone"
                             maxlength="25"
-                            value="<?= htmlspecialchars((string) ($user['phone'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                            value="{{ (string) ($user['phone'] ?? '') }}">
                     </div>
 
                     <p
@@ -167,14 +141,11 @@ require __DIR__ . '/../layouts/user-header.php';
                 <form
                     class="user-form"
                     id="logout-form"
-                    action="<?= htmlspecialchars($appUrl . '/logout', ENT_QUOTES, 'UTF-8') ?>"
+                    action="{{ url('/logout') }}"
                     method="post"
                     data-user-async-form>
 
-                    <input
-                        type="hidden"
-                        name="csrf_token"
-                        value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
+                    @csrf
 
                     <p
                         class="user-form-message"
@@ -208,17 +179,15 @@ require __DIR__ . '/../layouts/user-header.php';
 
                     <form
                         class="user-form"
-                        action="<?= htmlspecialchars($appUrl . '/profile', ENT_QUOTES, 'UTF-8') ?>"
+                        action="{{ url('/profile') }}"
                         method="post"
                         data-user-async-form
                         data-user-method="DELETE"
                         data-user-json="true"
                         data-user-confirm="Delete your LootLab account? This cannot be undone.">
 
-                        <input
-                            type="hidden"
-                            name="csrf_token"
-                            value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
+                        @csrf
+                        @method('DELETE')
 
                         <div class="user-field">
                             <label for="delete-password">
@@ -268,7 +237,7 @@ require __DIR__ . '/../layouts/user-header.php';
                 Your saved AI-generated designs.
             </p>
 
-            <?php if (empty($designs)): ?>
+            @if (empty($designs))
 
                 <div class="user-empty-state">
 
@@ -286,25 +255,21 @@ require __DIR__ . '/../layouts/user-header.php';
 
                 </div>
 
-            <?php else: ?>
+            @else
 
                 <div
                     class="user-products-grid"
                     style="margin-top: 24px;">
 
-                    <?php foreach ($designs as $design): ?>
+                    @foreach ($designs as $design)
 
-                        <?php
-                        $designId = (int) ($design['id'] ?? 0);
+                        @php
+$designId = (int) ($design['id'] ?? 0);
 
-                        $imageUrl = $appUrl
-                            . '/profile/design-image?id='
-                            . $designId;
+                        $imageUrl = ($design['image'] ?? url('/profile/design-image?id=' . $designId));
 
-                        $designLink = $appUrl
-                            . '/aiImage.php?design_id='
-                            . $designId;
-                        ?>
+                        $designLink = url('/aiImage.php?design_id=' . $designId);
+                        @endphp
 
                         <article class="user-product-card user-design-card">
 
@@ -312,14 +277,14 @@ require __DIR__ . '/../layouts/user-header.php';
 
                                 <a
                                     class="user-product-image-link"
-                                    href="<?= htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8') ?>"
+                                    href="{{ $imageUrl }}"
                                     target="_blank"
                                     rel="noopener">
 
                                     <img
                                         class="user-product-image"
-                                        src="<?= htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8') ?>"
-                                        alt="AI Design #<?= $designId ?>"
+                                        src="{{ $imageUrl }}"
+                                        alt="AI Design #{{ $designId }}"
                                         loading="lazy">
 
                                 </a>
@@ -329,22 +294,19 @@ require __DIR__ . '/../layouts/user-header.php';
                             <div class="user-product-content">
 
                                 <h3 class="user-product-title">
-                                   <?= $userLanguage === 'ar' ? 'تصميم' : 'Design' ?> #<?= $designId ?>
+                                   {{ $userLanguage === 'ar' ? 'تصميم' : 'Design' }} #{{ $designId }}
                                 </h3>
 
                                 <p class="user-product-category">
-                                    <?= htmlspecialchars(
-                                        (string) ($design['created_at'] ?? ''),
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    {{ 
+                                        (string) ($design['created_at'] ?? '') }}
                                 </p>
 
                                 <div class="user-product-actions">
 
                                     <a
                                         class="user-button-secondary"
-                                        href="<?= htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8') ?>"
+                                        href="{{ $imageUrl }}"
                                         target="_blank"
                                         rel="noopener">
                                         View Design
@@ -352,7 +314,7 @@ require __DIR__ . '/../layouts/user-header.php';
 
                                     <a
                                         class="user-button"
-                                        href="<?= htmlspecialchars($designLink, ENT_QUOTES, 'UTF-8') ?>">
+                                        href="{{ $designLink }}">
                                        	Customize a Product
                                     </a>
 
@@ -362,15 +324,16 @@ require __DIR__ . '/../layouts/user-header.php';
 
                         </article>
 
-                    <?php endforeach; ?>
+                    @endforeach
 
                 </div>
 
-            <?php endif; ?>
+            @endif
 
         </section>
 
     </div>
 </section>
 
-<?php require __DIR__ . '/../layouts/user-footer.php'; ?>
+
+@endsection

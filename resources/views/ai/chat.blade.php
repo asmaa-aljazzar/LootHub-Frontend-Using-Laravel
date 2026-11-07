@@ -1,150 +1,143 @@
-<?php
-$pageTitle = 'LOOTE AI';
-$userHideAiLink = true;
-$userExtraCss = '/css/ai-studio.css';
-require __DIR__ . '/../layouts/user-header.php';
+@extends('layout.app')
 
-// Translate UI labels only; never alter messages or AI-generated content.
+@section('title', 'LOOTE AI — LootHub')
+
+@section('content')
+@php
+$userAppUrl = url('/');
+$userBaseUrl = url('/');
+$userLanguage = 'en';
+$conversations = $conversations ?? [['id' => 1, 'title' => 'A gift for a Batman fan', 'updated_at' => '2026-11-07 12:00:00']];
+$messages = $messages ?? [['role' => 'assistant', 'content' => 'Welcome! The Batman Logo Hoodie is a great gift for a fan. This is a sample conversation.']];
+$conversationId = $conversationId ?? null;
+$error = $error ?? '';
+$message = $message ?? '';
 $chatIsArabic = $userLanguage === 'ar';
-$chatText = static fn (string $en, string $ar): string => $chatIsArabic ? $ar : $en;
-?>
-<div class="ai-chat-shell" dir="<?= $chatIsArabic ? 'rtl' : 'ltr' ?>"><div class="loote-chat-banner" dir="<?= $chatIsArabic ? 'rtl' : 'ltr' ?>"><div><span class="ai-kicker">YOUR SHOPPING SIDEKICK</span><h1>Meet LOOTE <span>✦</span></h1><p>Discover products, get inspired, and find your next favorite.</p></div><a class="ai-outline" href="<?= htmlspecialchars($userAppUrl . '/aiImage.php', ENT_QUOTES, 'UTF-8') ?>">✦ AI Image Studio</a></div>
+$chatText = static fn ($en, $ar) => $chatIsArabic ? $ar : $en;
+
+@endphp
+
+<div class="ai-chat-shell" dir="{{ $chatIsArabic ? 'rtl' : 'ltr' }}"><div class="loote-chat-banner" dir="{{ $chatIsArabic ? 'rtl' : 'ltr' }}"><div><span class="ai-kicker">YOUR SHOPPING SIDEKICK</span><h1>Meet LOOTE <span>✦</span></h1><p>Discover products, get inspired, and find your next favorite.</p></div><a class="ai-outline" href="{{ url('/ai/image') }}">✦ AI Image Studio</a></div>
 <div class="container">
     <aside>
-        <h2><?= $chatText('Previous Conversations', 'المحادثات السابقة') ?></h2>
+        <h2>{{ $chatText('Previous Conversations', 'المحادثات السابقة') }}</h2>
 
-        <form method="POST" action="ai.php">
+        <form method="POST" action="{{ url('/ai') }}">
             <input type="hidden" name="action" value="new_chat">
-            <input
-                type="hidden"
-                name="csrf_token"
-                value="<?= escapeHtml($_SESSION['ai_csrf']) ?>"
-            >
-            <button type="submit"><?= $chatText('+ New Conversation', '+ محادثة جديدة') ?></button>
+            @csrf
+            <button type="submit">{{ $chatText('+ New Conversation', '+ محادثة جديدة') }}</button>
         </form>
 
-        <?php foreach ($conversations as $conversation): ?>
+        @foreach ($conversations as $conversation)
             <a
-                class="history-link <?= $conversationId === (int) $conversation['id'] ? 'active' : '' ?>"
-                href="ai.php?conversation_id=<?= (int) $conversation['id'] ?>"
+                class="history-link {{ $conversationId === (int) $conversation['id'] ? 'active' : '' }}"
+                href="{{ url('/ai') }}?conversation_id={{ (int) $conversation['id'] }}"
             >
-                <?= escapeHtml($conversation['title']) ?>
+                {{ $conversation['title'] }}
                 <small>
-                    <?= escapeHtml($conversation['updated_at']) ?>
+                    {{ $conversation['updated_at'] }}
                 </small>
             </a>
 
-            <form method="POST" action="ai.php" class="history-action">
+            <form method="POST" action="{{ url('/ai') }}" class="history-action">
     <input type="hidden" name="action" value="rename">
 
     <input
         type="hidden"
         name="conversation_id"
-        value="<?= (int) $conversation['id'] ?>"
+        value="{{ (int) $conversation['id'] }}"
     >
 
-    <input
-        type="hidden"
-        name="csrf_token"
-        value="<?= escapeHtml($_SESSION['ai_csrf']) ?>"
-    >
+    @csrf
 
-    <label for="title-<?= (int) $conversation['id'] ?>">
-        <?= $chatText('Conversation Title', 'عنوان المحادثة') ?>
+    <label for="title-{{ (int) $conversation['id'] }}">
+        {{ $chatText('Conversation Title', 'عنوان المحادثة') }}
     </label>
 
     <input
-        id="title-<?= (int) $conversation['id'] ?>"
+        id="title-{{ (int) $conversation['id'] }}"
         type="text"
         name="title"
-        value="<?= escapeHtml($conversation['title']) ?>"
+        value="{{ $conversation['title'] }}"
         maxlength="150"
         required
     >
 
-    <button type="submit"><?= $chatText('Save Title', 'حفظ العنوان') ?></button>
+    <button type="submit">{{ $chatText('Save Title', 'حفظ العنوان') }}</button>
 </form>
 
 <form
     method="POST"
-    action="ai.php"
+    action="{{ url('/ai') }}"
     class="history-action"
-    onsubmit="return confirm(<?= htmlspecialchars(json_encode($chatText('Permanently delete this conversation and all messages?', 'حذف المحادثة وكل رسائلها نهائيًا؟'), JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>);"
+    onsubmit="return confirm({{ json_encode($chatText('Permanently delete this conversation and all messages?', 'حذف المحادثة وكل رسائلها نهائيًا؟'), JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE) }});"
 >
     <input type="hidden" name="action" value="delete">
 
     <input
         type="hidden"
         name="conversation_id"
-        value="<?= (int) $conversation['id'] ?>"
+        value="{{ (int) $conversation['id'] }}"
     >
 
-    <input
-        type="hidden"
-        name="csrf_token"
-        value="<?= escapeHtml($_SESSION['ai_csrf']) ?>"
-    >
+    @csrf
 
     <button type="submit" class="delete-button">
-        <?= $chatText('Delete Conversation', 'حذف المحادثة') ?>
+        {{ $chatText('Delete Conversation', 'حذف المحادثة') }}
     </button>
 </form>
-        <?php endforeach; ?>
+        @endforeach
 
-        <?php if ($conversations === []): ?>
-            <p><?= $chatText('No saved conversations yet.', 'لا توجد محادثات محفوظة بعد.') ?></p>
-        <?php endif; ?>
+        @if ($conversations === [])
+            <p>{{ $chatText('No saved conversations yet.', 'لا توجد محادثات محفوظة بعد.') }}</p>
+        @endif
     </aside>
 
     <section class="loote-chat-main">
         <h1>LOOTE — Your AI shopping assistant ✦</h1>
-        <p><?= $chatText('Tell me what you love or who you are shopping for.', 'احكيلي شو بتحب أو لمين بدك هدية.') ?></p>
-        <?php if ($error !== ''): ?>
+        <p>{{ $chatText('Tell me what you love or who you are shopping for.', 'احكيلي شو بتحب أو لمين بدك هدية.') }}</p>
+        @if ($error !== '')
             <div class="error" role="alert">
-                <?= escapeHtml($error) ?>
+                {{ $error }}
             </div>
-        <?php endif; ?>
+        @endif
 
-        <?php foreach ($messages as $entry): ?>
+        @foreach ($messages as $entry)
             <article
-                class="chat-message <?= $entry['role'] === 'user' ? 'user-message' : 'assistant-message' ?>"
+                class="chat-message {{ $entry['role'] === 'user' ? 'user-message' : 'assistant-message' }}"
             >
                 <strong>
-                    <?= $entry['role'] === 'user' ? $chatText('You', 'أنت') : 'LOOTE AI' ?>
+                    {{ $entry['role'] === 'user' ? $chatText('You', 'أنت') : 'LOOTE AI' }}
                 </strong>
 
-                <div class="message-text" dir="auto"><?= escapeHtml($entry['content']) ?></div>
+                <div class="message-text" dir="auto">{{ $entry['content'] }}</div>
             </article>
-        <?php endforeach; ?>
+        @endforeach
 
-        <form method="POST" action="ai.php" id="chat-form">
+        <form method="POST" action="{{ url('/ai') }}" id="chat-form">
             <input type="hidden" name="action" value="send">
 
             <input
                 type="hidden"
                 name="conversation_id"
-                value="<?= $conversationId !== null ? (int) $conversationId : '' ?>"
+                value="{{ $conversationId !== null ? (int) $conversationId : '' }}"
             >
 
-            <input
-                type="hidden"
-                name="csrf_token"
-                value="<?= escapeHtml($_SESSION['ai_csrf']) ?>"
-            >
+            @csrf
 
-            <label for="message"><?= $chatText('Your Message', 'رسالتك') ?></label>
+            <label for="message">{{ $chatText('Your Message', 'رسالتك') }}</label>
 
             <textarea
                 id="message"
                 name="message"
                 dir="auto"
                 maxlength="1500"
-                placeholder="<?= htmlspecialchars($chatText('I need a gift for my friend who loves Naruto', 'بدي هدية لصاحبي بحب ناروتو'), ENT_QUOTES, 'UTF-8') ?>"
+                placeholder="{{ $chatText('I need a gift for my friend who loves Naruto', 'بدي هدية لصاحبي بحب ناروتو') }}"
                 required
-            ><?= escapeHtml($message) ?></textarea>
+            >{{ $message }}</textarea>
 
             <button type="submit" id="send-button">
-                <?= $chatText('Send', 'إرسال') ?>
+                {{ $chatText('Send', 'إرسال') }}
             </button>
         </form>
     </section>
@@ -158,7 +151,7 @@ $chatText = static fn (string $en, string $ar): string => $chatIsArabic ? $ar : 
     const messageInput = document.getElementById('message');
 
     // Chat-only strings are selected from the server's saved language preference.
-    const chatCopy = <?= json_encode([
+    const chatCopy = {!! json_encode([
         'sending' => $chatText('Responding...', 'جاري الرد...'),
         'send' => $chatText('Send', 'إرسال'),
         'you' => $chatText('You', 'أنت'),
@@ -169,7 +162,7 @@ $chatText = static fn (string $en, string $ar): string => $chatIsArabic ? $ar : 
         'startError' => $chatText('Could not start the response. Please sign in and refresh the page.', 'تعذّر بدء الرد. تأكد من تسجيل الدخول وحدّث الصفحة.'),
         'connectionError' => $chatText('Connection ended before saving was confirmed. Refresh to check.', 'انقطع الاتصال قبل تأكيد الحفظ. حدّث الصفحة للتحقق.'),
         'receiveError' => $chatText('Could not receive the response.', 'تعذّر استقبال الرد.'),
-    ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+    ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!};
 
     if (!chatForm || !sendButton || !messageInput) {
         return;
@@ -493,4 +486,6 @@ $chatText = static fn (string $en, string $ar): string => $chatIsArabic ? $ar : 
 </script>
 
 </div>
-<?php require __DIR__ . '/../layouts/user-footer.php'; ?>
+
+
+@endsection

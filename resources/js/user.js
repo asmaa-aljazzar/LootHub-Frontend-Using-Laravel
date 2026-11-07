@@ -262,9 +262,10 @@
         }, { once: true });
     });
 
+    const storePreview = Boolean(document.querySelector('[data-store-preview]'));
     const favoriteButtons = Array.from(document.querySelectorAll('[data-user-favorite-button]'));
     const favoriteCount = document.querySelector('[data-user-favorite-count]');
-    if (favoriteButtons.length || favoriteCount) {
+    if (!storePreview && (favoriteButtons.length || favoriteCount)) {
         let csrfToken = '';
         let favoriteIds = new Set();
         let favoritesLoaded = false;
@@ -403,9 +404,9 @@
     }
 
     const cartUrl = `${appUrl}/cart`;
-    const cartPage = document.querySelector('[data-user-cart]');
+    const cartPage = storePreview ? null : document.querySelector('[data-user-cart]');
     const cartAddButtons = Array.from(document.querySelectorAll('[data-user-add-to-cart]'));
-    const cartCounts = Array.from(document.querySelectorAll('[data-user-cart-count]'));
+    const cartCounts = storePreview ? [] : Array.from(document.querySelectorAll('[data-user-cart-count]'));
     const updateCartCount = (data) => {
         const count = (data.items || []).reduce((sum, item) => sum + Number(item.quantity || 0), 0);
         cartCounts.forEach((badge) => {

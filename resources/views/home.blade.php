@@ -3,8 +3,8 @@
 @section ('content')
 
 @php
-    $topProducts = [];
-    $topProductsWithSales = 0;
+    $topProducts = [['id' => 1, 'product_id' => 1, 'name' => 'Batman Logo Hoodie', 'image' => asset('images/products/batmanLogoHoodie.png'), 'price' => 25, 'stock_quantity' => 10, 'category_id' => 1, 'category_name' => 'Clothing', 'units_sold' => 1]];
+    $topProductsWithSales = 1;
     $hasDemoRankings = false;
 @endphp
 

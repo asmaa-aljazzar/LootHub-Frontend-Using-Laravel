@@ -132,14 +132,14 @@
 
                     <!-- Admin Dashboard -->
                     @if ($userIsAdmin)
-                        <a class="user-nav-link user-admin-shortcut" href="{{ url('/admin.php') }}">
+                        <a class="user-nav-link user-admin-shortcut" href="{{ url('/admin/panel') }}">
                             <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
                             <span data-i18n="Go to Dashboard">Go to Dashboard</span>
                         </a>
                     @endif
 
                     <!-- AI Image Studio -->
-                    <a class="user-image-ai-link" href="{{ url('/aiImage.php') }}" aria-label="AI Image Studio"
+                    <a class="user-image-ai-link" href="{{ url('/ai/image') }}" aria-label="AI Image Studio"
                         title="AI Image Studio">
                         <svg class="user-ai-image-icon" viewBox="0 0 36 36" width="34" height="34" fill="none"
                             aria-hidden="true">

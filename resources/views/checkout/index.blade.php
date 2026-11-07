@@ -1,26 +1,20 @@
+@extends('layout.app')
 
-<?php
-$old = $old ?? [];
-$error = $error ?? null;
-$notice = $notice ?? null;
-$appUrl = rtrim($appUrl ?? '', '/');
-$csrfToken = $csrfToken ?? '';
-$selectedMethod = $old['payment_method'] ?? 'cod';
-$totals = $totals ?? [
-    'subtotal' => 0,
-    'discount' => 0,
-    'total' => 0
-];
+@section('title', 'Checkout — LootHub')
 
-$appliedPromoCode = $appliedPromoCode ?? '';
-$promoNotice = $promoNotice ?? null;
-$promoError = $promoError ?? null;
-
-$pageTitle = 'Checkout';
-require __DIR__ . '/../layouts/user-header.php';
-?>
+@section('content')
+@php
+    $old = $old ?? ['shipping_address' => 'Sample Street, Amman', 'phone' => '+962 790 000 000'];
+    $error = $error ?? null;
+    $notice = $notice ?? null;
+    $selectedMethod = $old['payment_method'] ?? 'cod';
+    $totals = $totals ?? ['subtotal' => 25, 'discount' => 0, 'total' => 25];
+    $appliedPromoCode = $appliedPromoCode ?? '';
+    $promoNotice = $promoNotice ?? null;
+    $promoError = $promoError ?? null;
+    $conversionRate = $conversionRate ?? '1.41'; // Display-only preview value.
+@endphp
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="<?= htmlspecialchars($appUrl . '/css/checkout-map.css?v=20261102-2', ENT_QUOTES, 'UTF-8') ?>">
 <section class="user-page">
     <div class="user-container">
 
@@ -32,40 +26,38 @@ require __DIR__ . '/../layouts/user-header.php';
 
         <div class="user-form-card">
 
-            <?php if ($error): ?>
+            @if ($error)
                 <p class="user-form-message" role="alert">
-                    <?= htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8') ?>
+                    {{ (string) $error }}
                 </p>
-            <?php endif; ?>
+            @endif
 
-            <?php if ($notice): ?>
+            @if ($notice)
                 <p class="user-form-message" role="status">
-                    <?= htmlspecialchars((string) $notice, ENT_QUOTES, 'UTF-8') ?>
+                    {{ (string) $notice }}
                 </p>
-            <?php endif; ?>
+            @endif
 
 <div class="user-field">
 
     <h2>Promo Code</h2>
 
-    <?php if ($promoNotice): ?>
+    @if ($promoNotice)
         <p role="status" style="color: green;">
-            <?= htmlspecialchars($promoNotice, ENT_QUOTES, 'UTF-8') ?>
+            {{ $promoNotice }}
         </p>
-    <?php endif; ?>
+    @endif
 
-    <?php if ($promoError): ?>
+    @if ($promoError)
         <p role="alert" style="color: crimson;">
-            <?= htmlspecialchars($promoError, ENT_QUOTES, 'UTF-8') ?>
+            {{ $promoError }}
         </p>
-    <?php endif; ?>
+    @endif
 
     <form class="user-promo-form" method="POST"
-          action="<?= htmlspecialchars($appUrl . '/checkout/promo', ENT_QUOTES, 'UTF-8') ?>">
+          action="{{ url('/checkout/promo') }}">
 
-        <input type="hidden"
-               name="csrf_token"
-               value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
+        @csrf
 
         <input
             class="user-input"
@@ -81,28 +73,26 @@ require __DIR__ . '/../layouts/user-header.php';
         </button>
     </form>
 
-    <?php if ($appliedPromoCode !== ''): ?>
+    @if ($appliedPromoCode !== '')
 
         <p>
             Applied:
             <strong>
-                <?= htmlspecialchars($appliedPromoCode, ENT_QUOTES, 'UTF-8') ?>
+                {{ $appliedPromoCode }}
             </strong>
         </p>
 
         <form method="POST"
-              action="<?= htmlspecialchars($appUrl . '/checkout/promo/remove', ENT_QUOTES, 'UTF-8') ?>">
+              action="{{ url('/checkout/promo/remove') }}">
 
-            <input type="hidden"
-                   name="csrf_token"
-                   value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
+            @csrf
 
             <button class="user-button-secondary" type="submit">
                 Remove Promo
             </button>
         </form>
 
-    <?php endif; ?>
+    @endif
 
 </div>
 
@@ -111,30 +101,27 @@ require __DIR__ . '/../layouts/user-header.php';
 
     <p>
         Subtotal:
-        <?= number_format((float) $totals['subtotal'], 2) ?> JOD
+        {{ number_format((float) $totals['subtotal'], 2) }} JOD
     </p>
 
     <p>
         Discount:
-        -<?= number_format((float) $totals['discount'], 2) ?> JOD
+        -{{ number_format((float) $totals['discount'], 2) }} JOD
     </p>
 
     <h3>
         Total:
-        <?= number_format((float) $totals['total'], 2) ?> JOD
+        {{ number_format((float) $totals['total'], 2) }} JOD
     </h3>
 </div>
 
 
             <form
                 class="user-form"
-                action="<?= htmlspecialchars($appUrl . '/checkout', ENT_QUOTES, 'UTF-8') ?>"
+                action="{{ url('/checkout') }}"
                 method="POST">
 
-                <input
-                    type="hidden"
-                    name="csrf_token"
-                    value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
+                @csrf
 
                 <div class="user-field">
                     <label for="shipping_address">
@@ -145,7 +132,7 @@ require __DIR__ . '/../layouts/user-header.php';
                         class="user-input"
                         id="shipping_address"
                         name="shipping_address"
-                        required><?= htmlspecialchars((string) ($old['shipping_address'] ?? ''), ENT_QUOTES, 'UTF-8') ?></textarea>
+                        required>{{ (string) ($old['shipping_address'] ?? '') }}</textarea>
                 </div>
 
                 <div class="checkout-map-section" data-checkout-map>
@@ -168,9 +155,9 @@ require __DIR__ . '/../layouts/user-header.php';
                         <strong>📍 Delivery meeting point:</strong>
                         <span id="checkout-meeting-point-preview">Not selected</span>
                     </div>
-                    <input type="hidden" id="delivery_lat" name="delivery_lat" value="<?= htmlspecialchars((string) ($old['delivery_lat'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
-                    <input type="hidden" id="delivery_lng" name="delivery_lng" value="<?= htmlspecialchars((string) ($old['delivery_lng'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
-                    <input type="hidden" id="meeting_point_label" name="meeting_point_label" value="<?= htmlspecialchars((string) ($old['meeting_point_label'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+                    <input type="hidden" id="delivery_lat" name="delivery_lat" value="{{ (string) ($old['delivery_lat'] ?? '') }}">
+                    <input type="hidden" id="delivery_lng" name="delivery_lng" value="{{ (string) ($old['delivery_lng'] ?? '') }}">
+                    <input type="hidden" id="meeting_point_label" name="meeting_point_label" value="{{ (string) ($old['meeting_point_label'] ?? '') }}">
                 </div>
 
                 <div class="user-field">
@@ -183,7 +170,7 @@ require __DIR__ . '/../layouts/user-header.php';
                         type="tel"
                         id="phone"
                         name="phone"
-                        value="<?= htmlspecialchars((string) ($old['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+                        value="{{ (string) ($old['phone'] ?? '') }}"
                         required>
                 </div>
 
@@ -197,7 +184,7 @@ require __DIR__ . '/../layouts/user-header.php';
                             type="radio"
                             name="payment_method"
                             value="cod"
-                            <?= $selectedMethod === 'cod' ? 'checked' : '' ?>>
+                            @checked($selectedMethod === 'cod')>
                         Cash on Delivery
                     </label>
 
@@ -206,7 +193,7 @@ require __DIR__ . '/../layouts/user-header.php';
                             type="radio"
                             name="payment_method"
                             value="stripe"
-                            <?= $selectedMethod === 'stripe' ? 'checked' : '' ?>>
+                            @checked($selectedMethod === 'stripe')>
                         Credit / Debit Card (Stripe)
                     </label>
                 </fieldset>
@@ -215,7 +202,7 @@ require __DIR__ . '/../layouts/user-header.php';
                     Stripe payments use the sandbox environment.
                     Conversion rate:
                     1 JOD =
-                    <?= htmlspecialchars((string) ($_ENV['STRIPE_JOD_TO_USD_RATE'] ?? '1.41'), ENT_QUOTES, 'UTF-8') ?>
+                    {{ $conversionRate }}
                     USD.
                     Order totals are stored in JOD.
                 </p>
@@ -225,14 +212,14 @@ require __DIR__ . '/../layouts/user-header.php';
                     <button
                         class="user-button"
                         type="submit"
-                        formaction="<?= htmlspecialchars($appUrl . '/checkout', ENT_QUOTES, 'UTF-8') ?>">
+                        formaction="{{ url('/checkout') }}">
                         Place Order (Cash on Delivery)
                     </button>
 
                     <button
                         class="user-button-secondary"
                         type="submit"
-                        formaction="<?= htmlspecialchars($appUrl . '/checkout/stripe', ENT_QUOTES, 'UTF-8') ?>">
+                        formaction="{{ url('/checkout/stripe') }}">
                         Pay with Stripe
                     </button>
 
@@ -245,6 +232,12 @@ require __DIR__ . '/../layouts/user-header.php';
     </div>
 </section>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-<script src="<?= htmlspecialchars($appUrl . '/js/checkout-map.js?v=20261101-1', ENT_QUOTES, 'UTF-8') ?>" defer></script>
-<?php require __DIR__ . '/../layouts/user-footer.php'; ?>
+
+
+
+@endsection
+
+@push('scripts')
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+    @vite('resources/js/checkout-map.js')
+@endpush

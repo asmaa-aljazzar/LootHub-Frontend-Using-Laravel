@@ -1,0 +1,16 @@
+@extends('layout.app')
+
+@section('title', 'Page not found — LootHub')
+
+@section('content')
+@php
+$userAppUrl = url('/');
+$userBaseUrl = url('/');
+$userLanguage = 'en';
+ $pageTitle = 'Page not found';  
+@endphp
+
+<section class="user-page"><div class="user-container" style="max-width:640px;text-align:center;padding:70px 20px"><p class="user-eyebrow">404 · Lost in the loot?</p><h1 class="user-page-title">This page is taking a break.</h1><p class="user-page-subtitle">The link may have moved. Let's get you back to the good stuff.</p><a class="user-button" href="{{ url('/products') }}">Back to Home</a></div></section>
+
+
+@endsection

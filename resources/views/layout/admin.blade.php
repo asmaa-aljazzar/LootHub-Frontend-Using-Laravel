@@ -1,4 +1,5 @@
 @php
+    $adminName = $adminName ?? 'Administrator';
     $adminLang = 'en';
     $adminTheme = 'plum-dark';
     $bootstrap = [

@@ -1,5 +1,5 @@
 <aside class="admin-sidebar" id="admin-sidebar" aria-label="Admin navigation">
-        <a class="admin-brand" href="{{ url('/admin/panel') }}" class="{{ request()->is('admin/panel') ? 'is-active' : '' }}" aria-label="LOOT HUB Admin Overview">
+        <a class="admin-brand {{ request()->is('admin/panel') ? 'is-active' : '' }}" href="{{ url('/admin/panel') }}" aria-label="LOOT HUB Admin Overview">
             <span class="admin-brand-mark" aria-hidden="true">
                 <img class="admin-logo-dark" src="{{ asset('images/branding/loot-hub-symbol.png') }}" alt="">
                 <span class="admin-logo-light"><svg>

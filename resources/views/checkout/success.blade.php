@@ -1,14 +1,13 @@
+@extends('layout.app')
 
-<?php
-// Order confirmation data
-$orderId = (int) ($orderId ?? 0);
-$appUrl = rtrim($appUrl ?? '', '/');
-$paymentMethod = $paymentMethod ?? 'cod';
-$paidAmount = $paidAmount ?? null;
+@section('title', 'Order confirmation — LootHub')
 
-$pageTitle = 'Order confirmation';
-require __DIR__ . '/../layouts/user-header.php';
-?>
+@section('content')
+@php
+    $orderId = (int) ($orderId ?? 1);
+    $paymentMethod = $paymentMethod ?? 'cod';
+    $paidAmount = $paidAmount ?? null;
+@endphp
 
 <section class="user-page">
     <div class="user-container">
@@ -22,7 +21,7 @@ require __DIR__ . '/../layouts/user-header.php';
                 Order confirmation
             </p>
 
-            <?php if ($orderId > 0): ?>
+            @if ($orderId > 0)
 
                 <h1 class="user-page-title">
                     Thank you for your order!
@@ -31,27 +30,27 @@ require __DIR__ . '/../layouts/user-header.php';
                 <p>
                     Your order
                     <strong>
-                        #<?= htmlspecialchars((string) $orderId, ENT_QUOTES, 'UTF-8') ?>
+                        #{{ (string) $orderId }}
                     </strong>
                     was placed successfully.
                 </p>
 
-                <?php if ($paymentMethod === 'stripe'): ?>
+                @if ($paymentMethod === 'stripe')
 
                     <p>
                         Payment received by card.
                     </p>
 
-                    <?php if ($paidAmount !== null): ?>
+                    @if ($paidAmount !== null)
                         <p>
                             Amount charged:
                             <strong>
-                                <?= htmlspecialchars((string) $paidAmount, ENT_QUOTES, 'UTF-8') ?>
+                                {{ (string) $paidAmount }}
                             </strong>
                         </p>
-                    <?php endif; ?>
+                    @endif
 
-                <?php else: ?>
+                @else
 
                     <p>
                         Payment method:
@@ -62,9 +61,9 @@ require __DIR__ . '/../layouts/user-header.php';
                         You pay when your order arrives.
                     </p>
 
-                <?php endif; ?>
+                @endif
 
-            <?php else: ?>
+            @else
 
                 <h1 class="user-page-title">
                     No order confirmation available
@@ -74,11 +73,11 @@ require __DIR__ . '/../layouts/user-header.php';
                     We could not find an order to confirm.
                 </p>
 
-            <?php endif; ?>
+            @endif
 
             <a
                 class="user-button"
-                href="<?= htmlspecialchars($appUrl . '/products', ENT_QUOTES, 'UTF-8') ?>">
+                href="{{ url('/products') }}">
                 Continue shopping
             </a>
 
@@ -86,4 +85,5 @@ require __DIR__ . '/../layouts/user-header.php';
     </div>
 </section>
 
-<?php require __DIR__ . '/../layouts/user-footer.php'; ?>
+
+@endsection

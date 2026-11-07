@@ -8,7 +8,7 @@
     <div class="loote-greeting" data-loote-greeting role="status" aria-live="polite" hidden><strong>MY NAME IS
             LOOTE!</strong><span>CAN I HELP YOU?</span><button type="button" data-loote-dismiss
             aria-label="Dismiss greeting">×</button></div>
-    <a class="loote-face" href="{{ url('/ai.php') }}" title="Chat with Loote" aria-label="Chat with Loote AI">
+    <a class="loote-face" href="{{ url('/ai') }}" title="Chat with Loote" aria-label="Chat with Loote AI">
         <svg viewBox="0 0 76 76" width="76" height="76" fill="none" aria-hidden="true">
             <path
                 d="M22 53c-8 0-12-5-12-12 0-6 4-11 10-12 2-10 9-16 19-16 9 0 16 6 18 14 7 1 11 6 11 13 0 8-6 13-14 13H22Z"

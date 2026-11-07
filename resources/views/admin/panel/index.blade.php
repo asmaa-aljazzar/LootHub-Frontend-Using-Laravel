@@ -17,10 +17,10 @@
 
     @php
         $metrics = [
-            ['icon' => 'wallet', 'label' => 'Completed order value', 'value' => '0.00', 'unit' => 'JOD', 'note' => 'Completed orders'],
-            ['icon' => 'users', 'label' => 'Customers', 'value' => '0', 'unit' => '', 'note' => 'Registered customer accounts'],
-            ['icon' => 'box', 'label' => 'Active products', 'value' => '0', 'unit' => '', 'note' => 'Products in your collection'],
-            ['icon' => 'bag', 'label' => 'Total orders', 'value' => '0', 'unit' => '', 'note' => 'Orders placed in your store'],
+            ['icon' => 'wallet', 'label' => 'Completed order value', 'value' => '25.00', 'unit' => 'JOD', 'note' => 'Completed orders'],
+            ['icon' => 'users', 'label' => 'Customers', 'value' => '1', 'unit' => '', 'note' => 'Registered customer accounts'],
+            ['icon' => 'box', 'label' => 'Active products', 'value' => '1', 'unit' => '', 'note' => 'Products in your collection'],
+            ['icon' => 'bag', 'label' => 'Total orders', 'value' => '1', 'unit' => '', 'note' => 'Orders placed in your store'],
         ];
     @endphp
 
@@ -68,16 +68,16 @@
             <div class="admin-panel-header"><h2 id="orders-heading">Recent orders</h2></div>
             <div class="admin-empty">
                 <svg aria-hidden="true"><use href="#i-bag" /></svg>
-                <h3>Your first order starts here</h3>
-                <p>New orders will appear as customers check out.</p>
+                <h3>Order #1 · Asmaa</h3>
+                <p>Processing · 25.00 JD · 7 November 2026</p>
             </div>
         </section>
         <section class="admin-panel" aria-labelledby="products-heading">
             <div class="admin-panel-header"><h2 id="products-heading">Best-selling products</h2></div>
             <div class="admin-empty">
                 <svg aria-hidden="true"><use href="#i-star" /></svg>
-                <h3>Make room for your next hit</h3>
-                <p>Best sellers will appear when product sales data is connected.</p>
+                <h3>Batman Logo Hoodie</h3>
+                <p>1 unit sold · 25.00 JD</p>
             </div>
         </section>
     </div>

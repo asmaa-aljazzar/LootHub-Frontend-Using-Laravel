@@ -1,18 +1,20 @@
-<?php
-$pageTitle = 'AI Image Studio';
-$userHideAiLink = true;
-$userExtraCss = '/css/ai-studio.css';
+@extends('layout.app')
 
-$escape = static fn ($value): string => htmlspecialchars(
-    (string) $value,
-    ENT_QUOTES | ENT_SUBSTITUTE,
-    'UTF-8'
-);
+@section('title', 'AI Image Studio — LootHub')
 
-$userBaseUrl = rtrim((string) ($_ENV['APP_URL'] ?? ''), '/');
+@section('content')
+@php
+$userAppUrl = url('/');
+$userBaseUrl = url('/');
+$userLanguage = 'en';
+$error = $error ?? '';
+$subject = $subject ?? 'person';
+$description = $description ?? 'A Batman-inspired design with purple highlights.';
+$generatedImage = $generatedImage ?? base64_encode(file_get_contents(public_path('images/products/batmanLogoHoodie.png')));
+$savedDesignId = $savedDesignId ?? null;
 
-require __DIR__ . '/../layouts/user-header.php';
-?>
+@endphp
+
 
 <div class="ai-studio" dir="ltr">
     <!-- Studio heading -->
@@ -26,16 +28,16 @@ require __DIR__ . '/../layouts/user-header.php';
             </p>
         </div>
 
-        <a class="ai-outline" href="<?= $escape($userBaseUrl . '/ai.php') ?>">
+        <a class="ai-outline" href="{{ url('/ai') }}">
             ✦ Chat with LOOTE
         </a>
     </div>
 
-    <?php if ($error !== ''): ?>
+    @if ($error !== '')
         <div class="ai-generation-error" role="alert">
-            <?= $escape($error) ?>
+            {{ $error }}
         </div>
-    <?php endif; ?>
+    @endif
 
     <div class="ai-studio-grid">
         <!-- Step 01: Design input -->
@@ -51,10 +53,10 @@ require __DIR__ . '/../layouts/user-header.php';
             <form
                 id="image-form"
                 method="POST"
-                action="<?= $escape($userBaseUrl . '/aiImage.php') ?>"
+                action="{{ url('/ai/image') }}"
                 enctype="multipart/form-data"
             >
-                <input type="hidden" name="csrf_token" value="<?= $escape($csrfToken) ?>">
+                @csrf
                 <input type="hidden" name="mode" value="text">
 
                 <label for="image">
@@ -104,11 +106,11 @@ require __DIR__ . '/../layouts/user-header.php';
 
                 <label for="subject">Person in photo</label>
                 <select id="subject" name="subject" required>
-                    <option value="person" <?= $subject === 'person' ? 'selected' : '' ?>>
+                    <option value="person" {{ $subject === 'person' ? 'selected' : '' }}>
                         Person / no preference
                     </option>
-                    <option value="man" <?= $subject === 'man' ? 'selected' : '' ?>>Man</option>
-                    <option value="woman" <?= $subject === 'woman' ? 'selected' : '' ?>>Woman</option>
+                    <option value="man" {{ $subject === 'man' ? 'selected' : '' }}>Man</option>
+                    <option value="woman" {{ $subject === 'woman' ? 'selected' : '' }}>Woman</option>
                 </select>
 
                 <label for="description">Describe your idea</label>
@@ -119,7 +121,7 @@ require __DIR__ . '/../layouts/user-header.php';
                     rows="5"
                     placeholder="Example: Transform me into an anime hero wearing a futuristic blue jacket, cinematic background…"
                     required
-                ><?= $escape($description) ?></textarea>
+                >{{ $description }}</textarea>
 
                 <button id="generate-button" class="ai-primary" type="submit">
                     ✦ Generate my design
@@ -142,11 +144,11 @@ require __DIR__ . '/../layouts/user-header.php';
                 </div>
             </div>
 
-            <?php if ($generatedImage !== ''): ?>
+            @if ($generatedImage !== '')
                 <div class="ai-result-frame">
                     <img
                         id="generated-design"
-                        src="data:image/png;base64,<?= $escape($generatedImage) ?>"
+                        src="data:image/png;base64,{{ $generatedImage }}"
                         alt="Your generated AI artwork"
                     >
                 </div>
@@ -154,7 +156,7 @@ require __DIR__ . '/../layouts/user-header.php';
                 <div class="ai-result-actions">
                     <a
                         class="ai-outline"
-                        href="data:image/png;base64,<?= $escape($generatedImage) ?>"
+                        href="data:image/png;base64,{{ $generatedImage }}"
                         download="loothub-ai-design.png"
                     >
                         ↓ Download image
@@ -162,7 +164,7 @@ require __DIR__ . '/../layouts/user-header.php';
                     <a
                         class="ai-outline"
                         id="ai-profile-link"
-                        href="<?= $escape($userBaseUrl . '/profile') ?>"
+                        href="{{ url('/profile') }}"
                     >
                         ✓ Add to my profile
                     </a>
@@ -172,22 +174,22 @@ require __DIR__ . '/../layouts/user-header.php';
                     ✓ Saved to your profile automatically. You can also add a printed
                     product to the cart below.
                 </p>
-            <?php else: ?>
+            @else
                 <div class="ai-empty-result">
                     <span>✦</span>
                     <h3>Your imagination starts here</h3>
                     <p>Upload a photo, describe a style, and your design will appear here.</p>
                 </div>
-            <?php endif; ?>
+            @endif
         </section>
     </div>
 
-    <?php if ($generatedImage !== '' && !empty($savedDesignId)): ?>
+    @if ($generatedImage !== '' && !empty($savedDesignId))
         <!-- Step 03: 3D product customizer -->
         <section
             class="ai-studio-card ai-product-customizer"
             id="ai-products"
-            data-design-id="<?= (int) $savedDesignId ?>"
+            data-design-id="{{ (int) $savedDesignId }}"
         >
             <div class="ai-card-title">
                 <span class="ai-step">03</span>
@@ -245,7 +247,7 @@ require __DIR__ . '/../layouts/user-header.php';
                         <button class="ai-primary" type="button" id="ai-add-cart">
                             🛒 Add to cart
                         </button>
-                        <a class="ai-outline" href="<?= $escape($userBaseUrl . '/profile') ?>">
+                        <a class="ai-outline" href="{{ url('/profile') }}">
                             ✓ Add to my profile
                         </a>
                     </div>
@@ -258,9 +260,9 @@ require __DIR__ . '/../layouts/user-header.php';
             </div>
         </section>
 
-        <script type="module" src="<?= $escape($userBaseUrl . '/js/ai-products.js') ?>"></script>
-        <script src="<?= $escape($userBaseUrl . '/js/ai-studio-cart.js?v=2') ?>" defer></script>
-    <?php endif; ?>
+        @vite('resources/js/ai-products.js')
+        @vite('resources/js/ai-studio-cart.js')
+    @endif
 </div>
 
 <!-- AI generation progress overlay -->
@@ -605,4 +607,6 @@ require __DIR__ . '/../layouts/user-header.php';
     });
 })();
 </script>
-<?php require __DIR__ . '/../layouts/user-footer.php'; ?>
+
+
+@endsection

@@ -22,3 +22,28 @@ Route::view('/admin/categories/show', 'admin.categories.show');
 // Customer orders (frontend previews)
 Route::view('/orders', 'orders.index');
 Route::view('/orders/details', 'orders.show');
+
+Route::view('/profile', 'profile.index');
+
+Route::view('/favorites', 'favorites.index');
+
+Route::view('/cart', 'cart.index');
+
+Route::view('/checkout', 'checkout.index');
+Route::view('/checkout/verify', 'checkout.verify');
+Route::view('/checkout/success', 'checkout.success');
+
+// Frontend product and AI previews
+Route::view('/products', 'admin.products.index');
+Route::view('/products/show', 'admin.products.show');
+Route::view('/products/{id}', 'admin.products.show')->whereNumber('id');
+Route::view('/admin/products/create', 'admin.products.create');
+Route::view('/ai', 'ai.chat');
+Route::view('/ai/image', 'ai.image');
+Route::view('/preview/not-found', 'errors.friendly-404');
+Route::view('/admin/users', 'admin.users.index');
+Route::view('/admin/products', 'admin.products.management');
+Route::view('/admin/orders', 'admin.orders.index');
+Route::view('/admin/promos', 'admin.promos.index');
+Route::view('/admin/reviews', 'admin.reviews.index');
+Route::view('/admin/settings', 'admin.settings.index');

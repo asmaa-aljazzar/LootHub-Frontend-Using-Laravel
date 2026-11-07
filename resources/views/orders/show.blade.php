@@ -4,8 +4,8 @@
 
 @section('content')
 @php
-    $order = $order ?? null;
-    $items = $items ?? [];
+    $order = $order ?? ['id' => 1, 'total_amount' => 25, 'status' => 'processing', 'created_at' => '2026-11-07 12:00:00', 'shipping_address' => 'Sample Street, Amman', 'phone' => '+962 790 000 000'];
+    $items = $items ?? [['name' => 'Batman Logo Hoodie', 'quantity' => 1, 'unit_price' => 25, 'product_id' => 1]];
     $canReview = $canReview ?? false;
 @endphp
 
